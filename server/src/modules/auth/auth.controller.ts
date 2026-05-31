@@ -35,6 +35,11 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   res.status(200).json({ user, accessToken });
 });
 
+export const getCurrenUser = asyncHandler(async (req: Request, res: Response) => {
+  const { user } = await authService.getCurrentUser(req.body.token);
+  res.status(200).json({ user });
+});
+
 export const refresh = asyncHandler(async (req: Request, res: Response) => {
   const refreshToken = getRefreshTokenFromRequest(req);
 

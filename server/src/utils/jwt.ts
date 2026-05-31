@@ -1,4 +1,4 @@
-import jwt, {SignOptions, JwtPayload } from "jsonwebtoken";
+import jwt, { SignOptions, JwtPayload } from "jsonwebtoken";
 import { env } from "../config/env.js";
 import { HttpError } from "./http.js";
 

@@ -5,6 +5,7 @@ import {
   getTokenExpiryDate,
   signAccessToken,
   signRefreshToken,
+  verifyAccessToken,
   verifyRefreshToken,
 } from "../../utils/jwt.js";
 import { generateResetToken, hashToken } from "../../utils/crypto.js";
@@ -84,6 +85,19 @@ export const login = async (input: { email: string; password: string }) => {
     user: toPublicUser(user),
     ...tokens,
   };
+};
+
+export const getCurrentUser = async (token: string) => {
+  const payload = verifyAccessToken(token);
+
+  if (!payload.sub) {
+    throw new HttpError("Invalid token", 401);
+  }
+  const user = await User.findById(payload.sub);
+  if (!user) {
+    throw new HttpError("User not found", 404);
+  }
+  return { user: toPublicUser(user) };
 };
 
 export const refresh = async (refreshToken: string) => {
