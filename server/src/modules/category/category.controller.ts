@@ -17,7 +17,7 @@ export const GetCategories = asyncHandler(async (req: Request, res: Response) =>
 export const GetCategoryById = asyncHandler(async (req: Request, res: Response) => {
   const { category } = await categoryService.getCategoryById(
     req.user!.id,
-    req.params.categoryId,
+    req.params.categoryId.toString(),
   );
 
   res.status(200).json({ category });
@@ -26,7 +26,7 @@ export const GetCategoryById = asyncHandler(async (req: Request, res: Response) 
 export const UpdateCategory = asyncHandler(async (req: Request, res: Response) => {
   const { category } = await categoryService.updateCategory(
     req.user!.id,
-    req.params.categoryId,
+    req.params.categoryId.toString(),
     req.body,
   );
 
@@ -36,7 +36,7 @@ export const UpdateCategory = asyncHandler(async (req: Request, res: Response) =
 export const DeleteCategory = asyncHandler(async (req: Request, res: Response) => {
   const result = await categoryService.deleteCategory(
     req.user!.id,
-    req.params.categoryId,
+    req.params.categoryId.toString(),
   );
 
   res.status(200).json(result);
