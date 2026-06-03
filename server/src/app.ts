@@ -5,6 +5,8 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import { env } from "./config/env.js";
 import authRoutes from "./modules/auth/auth.routes.js";
+import expenseRoutes from "./modules/expense/expense.routes.js";
+import categoryRoutes from "./modules/category/category.routes.js";
 import { notFound } from "./middleware/notFound.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
@@ -30,6 +32,8 @@ app.get("/health", (_req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/expenses", expenseRoutes);
+app.use("/api/categories", categoryRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
