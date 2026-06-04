@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { HttpError } from "../utils/http";
-import { env } from "../config/env";
+import { HttpError } from "../utils/http.js";
+import { env } from "../config/env.js";
 
 export const errorHandler = (
   err: unknown,
