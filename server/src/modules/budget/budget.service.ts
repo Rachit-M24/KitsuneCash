@@ -1,4 +1,4 @@
-import { Budget } from "../../models/budget.model.js";
+import { Budget } from "./budget.model.js";
 import { HttpError } from "../../utils/http.js";
 
 export const getAllBudgets = async (userId: string, budgetId: string) => {

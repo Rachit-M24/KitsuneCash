@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { Category } from "../../models/category.model.js";
+import { Category } from "./category.model.js";
 import { HttpError } from "../../utils/http.js";
 
 type CategoryRecord = {

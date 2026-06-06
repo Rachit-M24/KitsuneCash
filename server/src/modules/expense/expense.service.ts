@@ -1,4 +1,4 @@
-import Expense, { ExpenseDocument } from "../../models/expense.model.js";
+import Expense, { ExpenseDocument } from "./expense.model.js";
 import { HttpError } from "../../utils/http.js";
 
 const toPublicExpense = (expense: ExpenseDocument) => ({

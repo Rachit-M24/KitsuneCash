@@ -1,4 +1,4 @@
-import User, { UserDocument } from "../../models/user.model.js";
+import User, { UserDocument } from "./user.model.js";
 import { env } from "../../config/env.js";
 import { comparePassword, hashPassword } from "../../utils/password.js";
 import {

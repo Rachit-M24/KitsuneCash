@@ -34,6 +34,7 @@ app.get("/health", (_req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/expenses", expenseRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/goals", goalRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
