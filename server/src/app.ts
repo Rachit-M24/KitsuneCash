@@ -7,6 +7,7 @@ import { env } from "./config/env.js";
 import authRoutes from "./modules/auth/auth.routes.js";
 import expenseRoutes from "./modules/expense/expense.routes.js";
 import categoryRoutes from "./modules/category/category.routes.js";
+import goalRoutes from "./modules/goal/goal.routes.js";
 import { notFound } from "./middleware/notFound.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
