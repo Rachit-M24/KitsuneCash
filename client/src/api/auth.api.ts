@@ -1,13 +1,14 @@
 import api from "./axios";
 
-export const register = (credentials: { email: string; password: string; confirmPassword: string }) => {
-    return api.post("/auth/register", credentials);
+export const register = async(credentials: { email: string; password: string; confirmPassword: string }) => {
+    const result = await api.post("/auth/register", credentials);
+    return result;
 }
-export const logIn = (credentials: { email: string; password: string }) => {
-     const result = api.post("/auth/login", credentials);
+export const logIn = async (credentials: { email: string; password: string }) => {
+     const result = await api.post("/auth/login", credentials);
      return result;
 }
 
-export const logOut = () => {
-    return api.post("/auth/logout");
+export const logOut = async () => {
+    return await api.post("/auth/logout");
 }

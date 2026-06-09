@@ -1,4 +1,6 @@
 import { logIn, logOut, register } from "@/api/auth.api";
+import type { AuthResponse } from "@/types/auth.types";
+import type { User } from "@/types/User";
 import { create } from "zustand";
 
 type UserLogInPayload = {
@@ -22,12 +24,12 @@ interface AuthState {
   accessToken: string | null;
   isAuthenticated: boolean;
   isInitializing: boolean;
-  User: null;
+  User: {};
   actions: AuthActions;
 }
 
 const initialState = {
-  User: null,
+  User: {},
   accessToken: null,
   isAuthenticated: false,
   isInitializing: false,
@@ -37,27 +39,27 @@ export const authStore = create<AuthState>((set) => {
   return {
     ...initialState,
     actions: {
-      logIn: (userCredentials: UserLogInPayload) => {
-        const result = logIn(userCredentials);
+      logIn: async(userCredentials: UserLogInPayload) => {
+        const result = await logIn(userCredentials);
         set({
-          User: result.user,
-          accessToken: result.accessToken,
+          User: result.data.user,
+          accessToken: result.data.accessToken,
           isAuthenticated: true,
         });
       },
-      logOut: () => {
-        logOut();
+      logOut: async () => {
+        await logOut();
         set({
-          User: null,
+          User: {},
           accessToken: null,
           isAuthenticated: false,
         });
       },
-      register: (userCredentials: UserRegisterPayload) => {
-         const result = register(userCredentials);
+      register: async (userCredentials: UserRegisterPayload) => {
+         const result = await register(userCredentials);
          set({
-           User: result.user,
-           accessToken: result.accessToken,
+           User: result.data.user,
+           accessToken: result.data.accessToken,
            isAuthenticated: true,
          });
       }
