@@ -1,11 +1,12 @@
 import axios from "axios";
+import { API_PATHS } from "@/constants/api.constant";
 
 export const refreshSession = async (): Promise<string> => {
   try {
     const response = await axios.post(
-      "http://localhost:5000/api/auth/refresh",
+      `${import.meta.env.VITE_API_BASE_URL}${API_PATHS.auth.refresh}`,
       {},
-      { withCredentials: true }
+      { withCredentials: true },
     );
 
     return response.data.accessToken;

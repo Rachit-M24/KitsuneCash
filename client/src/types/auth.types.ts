@@ -1,9 +1,13 @@
+export type AiAssistantStatus = "active" | "inactive";
+
 export interface User {
   id: string;
-  username: string;
   email: string;
+  username: string;
   aiAssistantName: string;
+  aiAssistantStatus: AiAssistantStatus;
 }
+
 export interface LoginCredentials {
   email: string;
   password: string;
@@ -13,7 +17,7 @@ export interface RegisterCredentials {
   username: string;
   email: string;
   password: string;
-  confirmPassword: string; // client-only validation, not sent to API
+  confirmPassword: string;
 }
 
 export interface AuthResponse {
@@ -23,4 +27,8 @@ export interface AuthResponse {
 
 export interface RefreshResponse {
   accessToken: string;
+}
+
+export interface ForgotPasswordPayload {
+  email: string;
 }

@@ -1,68 +1,63 @@
-import { logIn, logOut, register } from "@/api/auth.api";
-import type { AuthResponse } from "@/types/auth.types";
-import type { User } from "@/types/User";
 import { create } from "zustand";
-
-type UserLogInPayload = {
-  email: string;
-  password: string;
-};
-
-type UserRegisterPayload = {
-  email: string;
-  password: string;
-  confirmPassword: string;
-};
+import {
+  logIn as logInApi,
+  logOut as logOutApi,
+  register as registerApi,
+} from "@/api/auth.api";
+import type {
+  LoginCredentials,
+  RegisterCredentials,
+  User,
+} from "@/types/auth.types";
 
 interface AuthActions {
-  logIn: (credentials: UserLogInPayload) => void;
-  logOut: () => void;
-  register: (credentials: UserRegisterPayload) => void;
+  logIn: (credentials: LoginCredentials) => Promise<void>;
+  logOut: () => Promise<void>;
+  register: (credentials: RegisterCredentials) => Promise<void>;
 }
 
 interface AuthState {
+  user: User | null;
   accessToken: string | null;
   isAuthenticated: boolean;
   isInitializing: boolean;
-  User: {};
   actions: AuthActions;
 }
 
 const initialState = {
-  User: {},
+  user: null,
   accessToken: null,
   isAuthenticated: false,
   isInitializing: false,
 };
 
-export const authStore = create<AuthState>((set) => {
-  return {
-    ...initialState,
-    actions: {
-      logIn: async(userCredentials: UserLogInPayload) => {
-        const result = await logIn(userCredentials);
-        set({
-          User: result.data.user,
-          accessToken: result.data.accessToken,
-          isAuthenticated: true,
-        });
-      },
-      logOut: async () => {
-        await logOut();
-        set({
-          User: {},
-          accessToken: null,
-          isAuthenticated: false,
-        });
-      },
-      register: async (userCredentials: UserRegisterPayload) => {
-         const result = await register(userCredentials);
-         set({
-           User: result.data.user,
-           accessToken: result.data.accessToken,
-           isAuthenticated: true,
-         });
-      }
+export const authStore = create<AuthState>((set) => ({
+  ...initialState,
+  actions: {
+    logIn: async (credentials) => {
+      const result = await logInApi(credentials);
+      set({
+        user: result.data.user,
+        accessToken: result.data.accessToken,
+        isAuthenticated: true,
+      });
     },
-  };
-});
+    logOut: async () => {
+      await logOutApi();
+      set({
+        user: null,
+        accessToken: null,
+        isAuthenticated: false,
+      });
+    },
+    register: async (credentials) => {
+      const { confirmPassword: _, ...payload } = credentials;
+      const result = await registerApi(payload);
+      set({
+        user: result.data.user,
+        accessToken: result.data.accessToken,
+        isAuthenticated: true,
+      });
+    },
+  },
+}));
