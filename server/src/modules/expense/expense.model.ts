@@ -1,4 +1,3 @@
-// server/src/models/expense.model.ts
 import mongoose from "mongoose";
 
 export interface ExpenseDocument extends mongoose.Document {

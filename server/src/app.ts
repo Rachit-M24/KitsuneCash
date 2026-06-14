@@ -8,6 +8,7 @@ import authRoutes from "./modules/auth/auth.routes.js";
 import expenseRoutes from "./modules/expense/expense.routes.js";
 import categoryRoutes from "./modules/category/category.routes.js";
 import goalRoutes from "./modules/goal/goal.routes.js";
+import budgetRoutes from "./modules/budget/budget.routes.js";
 import { notFound } from "./middleware/notFound.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
@@ -34,6 +35,7 @@ app.get("/health", (_req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/expenses", expenseRoutes);
+app.use("/api/budgets", budgetRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/goals", goalRoutes);
 
