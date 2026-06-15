@@ -1,8 +1,7 @@
-const categoryBudgetDto = {
-    category: "",
-    budget: 0,
-    spent: 0,
-    remaining: 0
+export interface CategoryBudgetDto {
+  categoryId: string;
+  categoryName: string;
+  budget: number;
+  spent: number;
+  remaining: number;
 }
-
-export default categoryBudgetDto;

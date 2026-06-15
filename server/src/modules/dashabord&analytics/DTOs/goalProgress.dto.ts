@@ -1,8 +1,9 @@
-const goalProgressDto = {
-    goalName: "",
-    targetAmount: 0,
-    currentAmount: 0,
-    progressPercentage: 0
-};
 
-export default goalProgressDto;
+export interface GoalProgressDto {
+    title: string;
+    targetAmount: number;
+    currentAmount: number;
+    progressPercentage: number;
+}
+
+export default GoalProgressDto;

@@ -1,8 +1,8 @@
-const dashboardSummaryDto = {
-    totalSpent: 0,
-    totalBudget: 0,
-    totalRemaining: 0,
-    activeGoals: []
-};
+import { GoalProgressDto } from "./goalProgress.dto.js";
 
-export default dashboardSummaryDto;
+export interface DashboardSummaryDto {
+  totalSpent: number;
+  totalBudget: number;
+  totalRemaining: number;
+  activeGoals: GoalProgressDto[];
+}

@@ -1,8 +1,8 @@
-const trendsSummaryDto = {
-    "totalExpense": 0,
-    "totalIncome": 0,
-    "totalBalance": 0,
-    "totalCategories": 0
+export interface TrendsSummaryDto {
+    totalExpense: number;
+    totalIncome: number;
+    totalBalance: number;
+    totalCategories: number;
 }
 
-export default trendsSummaryDto;
+export default TrendsSummaryDto;

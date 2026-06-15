@@ -11,6 +11,7 @@ import goalRoutes from "./modules/goal/goal.routes.js";
 import budgetRoutes from "./modules/budget/budget.routes.js";
 import { notFound } from "./middleware/notFound.js";
 import { errorHandler } from "./middleware/errorHandler.js";
+import dashboardRoutes from "./modules/dashabord&analytics/dashboard.routes.js";
 
 const app = express();
 
@@ -38,6 +39,7 @@ app.use("/api/expenses", expenseRoutes);
 app.use("/api/budgets", budgetRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/goals", goalRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
