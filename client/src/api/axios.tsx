@@ -23,10 +23,13 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
+    const { refreshToken } = authStore.getState().actions;
     if (axios.isAxiosError(error)) {
       const status = error.response?.status;
-
+      if (status === 401) {
+        await refreshToken();
+      }
       if (status === 403) {
         console.error("Forbidden: You don't have access to this resource.");
       }

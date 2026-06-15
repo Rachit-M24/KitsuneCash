@@ -1,15 +1,15 @@
-import axios from "axios";
 import { API_PATHS } from "@/constants/api.constant";
+import api from "./axios";
 
-export const refreshSession = async (): Promise<string> => {
+export const refreshSession = async () => {
   try {
-    const response = await axios.post(
+    const response = await api.post(
       `${import.meta.env.VITE_API_BASE_URL}${API_PATHS.auth.refresh}`,
       {},
       { withCredentials: true },
     );
 
-    return response.data.accessToken;
+    return response;
   } catch (error) {
     console.error("Error refreshing token:", error);
     throw error;
