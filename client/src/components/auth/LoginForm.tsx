@@ -21,7 +21,7 @@ import { loginSchema, type LoginFormValues } from "@/schemas/auth/login.schema";
 
 export function LoginForm() {
   const navigate = useNavigate();
-  const { actions } = useAuth();
+  const { actions, isAuthenticated , isInitializing } = useAuth();
   const [rootError, setRootError] = useState<string | null>(null);
 
   const form = useForm<LoginFormValues>({
@@ -31,7 +31,18 @@ export function LoginForm() {
       password: "",
     },
   });
+  if (isInitializing) {
+    return (
+      <div className="flex min-h-svh items-center justify-center">
+        <Loader2 className="animate-spin" />
+      </div>
+    );
+  }
 
+  if (isAuthenticated) {
+    navigate("/");
+  }
+  
   const onSubmit = async (values: LoginFormValues) => {
     try {
       setRootError(null);
@@ -58,6 +69,7 @@ export function LoginForm() {
                   type="email"
                   placeholder="you@example.com"
                   autoComplete="email"
+                  className="h-11 bg-zinc-50/50 border-zinc-200 focus-visible:ring-orange-500 focus-visible:border-orange-500 transition-colors"
                   {...field}
                 />
               </FormControl>
@@ -77,6 +89,7 @@ export function LoginForm() {
                   type="password"
                   placeholder="Enter your password"
                   autoComplete="current-password"
+                  className="h-11 bg-zinc-50/50 border-zinc-200 focus-visible:ring-orange-500 focus-visible:border-orange-500 transition-colors"
                   {...field}
                 />
               </FormControl>
@@ -91,10 +104,10 @@ export function LoginForm() {
           </p>
         ) : null}
 
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
+        <Button type="submit" className="w-full h-11 bg-orange-600 hover:bg-orange-700 text-white font-semibold shadow-sm hover:shadow transition-all" disabled={isSubmitting}>
           {isSubmitting ? (
             <>
-              <Loader2 className="animate-spin" />
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Signing in...
             </>
           ) : (
@@ -102,10 +115,10 @@ export function LoginForm() {
           )}
         </Button>
 
-        <div className="flex flex-col gap-2 text-center text-sm text-muted-foreground">
+        <div className="flex flex-col gap-3 pt-2 text-center text-sm font-medium text-zinc-500">
           <Link
             to={AUTH_ROUTES.forgotPassword}
-            className="text-primary underline-offset-4 hover:underline"
+            className="text-orange-600 hover:text-orange-700 underline-offset-4 hover:underline transition-colors"
           >
             Forgot your password?
           </Link>
@@ -113,7 +126,7 @@ export function LoginForm() {
             Don&apos;t have an account?{" "}
             <Link
               to={AUTH_ROUTES.register}
-              className="text-primary underline-offset-4 hover:underline"
+              className="text-orange-600 hover:text-orange-700 font-semibold underline-offset-4 hover:underline transition-colors"
             >
               Create one
             </Link>

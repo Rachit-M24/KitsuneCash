@@ -1,13 +1,13 @@
-import { AuthCard } from "@/components/auth/AuthCard";
+import AuthPage from "@/pages/Auth/AuthPage";
 import { ForgotPasswordForm } from "@/components/auth/ForgotPasswordForm";
 
 export function ForgotPasswordPage() {
   return (
-    <AuthCard
+    <AuthPage
       title="Forgot password"
       description="Enter your email and we'll send reset instructions"
     >
       <ForgotPasswordForm />
-    </AuthCard>
+    </AuthPage>
   );
 }

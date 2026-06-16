@@ -26,6 +26,19 @@ export function RegisterForm() {
   const navigate = useNavigate();
   const { actions } = useAuth();
   const [rootError, setRootError] = useState<string | null>(null);
+  const { isAuthenticated, isInitializing } = useAuth();
+
+  if (isInitializing) {
+    return (
+      <div className="flex min-h-svh items-center justify-center">
+        <Loader2 className="animate-spin" />
+      </div>
+    );
+  }
+
+  if (isAuthenticated) {
+    navigate("/");
+  }
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -51,7 +64,11 @@ export function RegisterForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4" noValidate>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-4"
+        noValidate
+      >
         <FormField
           control={form.control}
           name="username"
@@ -63,6 +80,7 @@ export function RegisterForm() {
                   type="text"
                   placeholder="User Name"
                   autoComplete="username"
+                  className="h-11 bg-zinc-50/50 border-zinc-200 focus-visible:ring-orange-500 focus-visible:border-orange-500 transition-colors"
                   {...field}
                 />
               </FormControl>
@@ -82,6 +100,7 @@ export function RegisterForm() {
                   type="email"
                   placeholder="you@example.com"
                   autoComplete="email"
+                  className="h-11 bg-zinc-50/50 border-zinc-200 focus-visible:ring-orange-500 focus-visible:border-orange-500 transition-colors"
                   {...field}
                 />
               </FormControl>
@@ -101,6 +120,7 @@ export function RegisterForm() {
                   type="password"
                   placeholder="Create a password"
                   autoComplete="new-password"
+                  className="h-11 bg-zinc-50/50 border-zinc-200 focus-visible:ring-orange-500 focus-visible:border-orange-500 transition-colors"
                   {...field}
                 />
               </FormControl>
@@ -120,6 +140,7 @@ export function RegisterForm() {
                   type="password"
                   placeholder="Confirm your password"
                   autoComplete="new-password"
+                  className="h-11 bg-zinc-50/50 border-zinc-200 focus-visible:ring-orange-500 focus-visible:border-orange-500 transition-colors"
                   {...field}
                 />
               </FormControl>
@@ -134,10 +155,10 @@ export function RegisterForm() {
           </p>
         ) : null}
 
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
+        <Button type="submit" className="w-full h-11 bg-orange-600 hover:bg-orange-700 text-white font-semibold shadow-sm hover:shadow transition-all" disabled={isSubmitting}>
           {isSubmitting ? (
             <>
-              <Loader2 className="animate-spin" />
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Creating account...
             </>
           ) : (
@@ -145,11 +166,11 @@ export function RegisterForm() {
           )}
         </Button>
 
-        <p className="text-center text-sm text-muted-foreground">
+        <p className="text-center pt-2 text-sm font-medium text-zinc-500">
           Already have an account?{" "}
           <Link
             to={AUTH_ROUTES.login}
-            className="text-primary underline-offset-4 hover:underline"
+            className="text-orange-600 hover:text-orange-700 font-semibold underline-offset-4 hover:underline transition-colors"
           >
             Sign in
           </Link>

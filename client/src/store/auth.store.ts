@@ -9,11 +9,14 @@ import type {
   RegisterCredentials,
   User,
 } from "@/types/auth.types";
+import { refreshSession } from "@/api/refresh.api";
 
 interface AuthActions {
   logIn: (credentials: LoginCredentials) => Promise<void>;
   logOut: () => Promise<void>;
   register: (credentials: RegisterCredentials) => Promise<void>;
+  refreshToken: () => Promise<void>;
+  initializeAuth: () => Promise<void>;
 }
 
 interface AuthState {
@@ -28,7 +31,7 @@ const initialState = {
   user: null,
   accessToken: null,
   isAuthenticated: false,
-  isInitializing: false,
+  isInitializing: true,
 };
 
 export const authStore = create<AuthState>((set) => ({
@@ -39,6 +42,7 @@ export const authStore = create<AuthState>((set) => ({
       set({
         user: result.data.user,
         accessToken: result.data.accessToken,
+        isInitializing: false,
         isAuthenticated: true,
       });
     },
@@ -47,6 +51,7 @@ export const authStore = create<AuthState>((set) => ({
       set({
         user: null,
         accessToken: null,
+        isInitializing: false,
         isAuthenticated: false,
       });
     },
@@ -56,8 +61,38 @@ export const authStore = create<AuthState>((set) => ({
       set({
         user: result.data.user,
         accessToken: result.data.accessToken,
+        isInitializing: false,
         isAuthenticated: true,
       });
+    },
+
+    refreshToken: async () => {
+      const result = await refreshSession();
+      set({
+        user: result.data.user,
+        accessToken: result.data.accessToken,
+        isAuthenticated: true,
+        isInitializing: false,
+      });
+    },
+
+    initializeAuth: async () => {
+      try {
+        const result = await refreshSession();
+        set({
+          user: result.data.user,
+          accessToken: result.data.accessToken,
+          isAuthenticated: true,
+          isInitializing: false,
+        });
+      } catch (error) {
+        set({
+          user: null,
+          accessToken: null,
+          isAuthenticated: false,
+          isInitializing: false,
+        });
+      }
     },
   },
 }));

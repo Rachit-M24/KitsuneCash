@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, BarChart3, Shield, Sparkles, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AUTH_ROUTES } from "@/constants/auth.routes";
@@ -30,7 +30,7 @@ const features = [
 
 export function HomePage() {
   const { isAuthenticated, actions } = useAuth();
-
+  const navigate = useNavigate();
   return (
     <main className="relative min-h-svh overflow-x-hidden bg-zinc-950 text-white">
       <div className="pointer-events-none fixed inset-0 z-0">
@@ -67,7 +67,10 @@ export function HomePage() {
                 variant="outline"
                 size="sm"
                 className="border-white/10 bg-white/5 text-white hover:bg-white/10 hover:text-white"
-                onClick={() => void actions.logOut()}
+                onClick={() => {
+                  void actions.logOut();
+                  navigate("/");
+                }}
               >
                 Sign out
               </Button>
@@ -119,7 +122,10 @@ export function HomePage() {
                 variant="outline"
                 size="lg"
                 className="h-11 w-full min-w-[10rem] border-white/10 bg-white/5 px-6 text-white hover:bg-white/10 hover:text-white sm:w-auto"
-                onClick={() => void actions.logOut()}
+                onClick={() => {
+                  void actions.logOut();
+                  navigate("/");
+                }}
               >
                 Sign out
               </Button>

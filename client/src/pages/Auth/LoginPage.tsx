@@ -1,13 +1,13 @@
-import { AuthCard } from "@/components/auth/AuthCard";
+import AuthPage from "@/pages/Auth/AuthPage";
 import { LoginForm } from "@/components/auth/LoginForm";
 
 export function LoginPage() {
   return (
-    <AuthCard
+    <AuthPage
       title="Welcome back"
       description="Sign in to your KitsuneCash account"
     >
       <LoginForm />
-    </AuthCard>
+    </AuthPage>
   );
 }

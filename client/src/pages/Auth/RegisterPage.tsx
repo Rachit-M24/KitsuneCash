@@ -1,13 +1,13 @@
-import { AuthCard } from "@/components/auth/AuthCard";
+import AuthPage from "@/pages/Auth/AuthPage";
 import { RegisterForm } from "@/components/auth/RegisterForm";
 
 export function RegisterPage() {
   return (
-    <AuthCard
+    <AuthPage
       title="Create an account"
       description="Get started with KitsuneCash today"
     >
       <RegisterForm />
-    </AuthCard>
+    </AuthPage>
   );
 }
