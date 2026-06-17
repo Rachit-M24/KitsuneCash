@@ -6,4 +6,7 @@ export const API_PATHS = {
     refresh: "/auth/refresh",
     forgotPassword: "/auth/forgot-password",
   },
+  dashbaord: {
+    getDashboardData: "/dashboard",
+  },
 } as const;

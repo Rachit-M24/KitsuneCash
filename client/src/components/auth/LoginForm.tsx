@@ -40,7 +40,7 @@ export function LoginForm() {
   }
 
   if (isAuthenticated) {
-    navigate("/");
+    navigate("/dashboard");
   }
   
   const onSubmit = async (values: LoginFormValues) => {

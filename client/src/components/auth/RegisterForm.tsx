@@ -37,7 +37,7 @@ export function RegisterForm() {
   }
 
   if (isAuthenticated) {
-    navigate("/");
+    navigate("/dashboard");
   }
 
   const form = useForm<RegisterFormValues>({
