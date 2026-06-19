@@ -1,5 +1,6 @@
 import { Layout } from "@/components/layout/Layout";
 import { HomePage } from "@/pages/LandingPage/HomePage";
+import { DashboardPage } from "@/pages/Dashboard/DashboardPage";
 import { authRoutes } from "./auth.routes";
 import ProtectedRoute from "@/utils/ProtectedRoutes";
 
@@ -13,7 +14,11 @@ export const routes = [
     ],
   },
   {
-    path:"/dashboard",
-    element: <ProtectedRoute><div>Dashboard</div></ProtectedRoute>
-  }
+    path: "/dashboard",
+    element: (
+      <ProtectedRoute>
+        <DashboardPage />
+      </ProtectedRoute>
+    ),
+  },
 ];

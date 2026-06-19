@@ -24,7 +24,7 @@ const initialState = {
     isError: false,
     errorMessage: '',
 }
-export const expenseStore = create<ExpenseState>((set) => ({
+export const expenseStore = create<ExpenseState & ExpenseActions>((set) => ({
     ...initialState,
     insertExpense: (expense: Expense) => set((state) => ({
         expenseList: [...state.expenseList, expense],

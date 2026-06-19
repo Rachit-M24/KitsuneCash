@@ -54,7 +54,7 @@ export function RegisterForm() {
     try {
       setRootError(null);
       await actions.register(values);
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
       setRootError(getErrorMessage(error));
     }

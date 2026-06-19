@@ -15,7 +15,7 @@ export function AuthLayout() {
   }
 
   if (isAuthenticated) {
-    navigate("/");
+    navigate("/dashboard");
   }
   return (
     <>

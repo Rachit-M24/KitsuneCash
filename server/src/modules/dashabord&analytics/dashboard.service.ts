@@ -77,7 +77,7 @@ export const dashboardService = {
       totalSpent,
       totalBudget,
       totalRemaining: totalBudget - totalSpent,
-      activeGoals: goalSummary,
+      activeGoals: goals.length,
     };
 
     return {

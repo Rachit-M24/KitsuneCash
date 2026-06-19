@@ -1,5 +1,6 @@
+import { getDashboardData } from "@/api/dashboard.api";
 import type { DashboardResponse } from "@/types/dashboardTypes/dashboardResponse.types";
-import { create } from "axios";
+import { create } from "zustand";
 
 interface DashboardState {
   DashboardResponse: DashboardResponse;
@@ -11,12 +12,11 @@ const initialState: DashboardState = {
 export const dashboardStore = create<DashboardState>((set) => ({
   ...initialState,
   actions: {
-    ...initialState.actions,
+    getDashboardResponse: async () => {
+      const response = await getDashboardData();
+      set({
+        DashboardResponse: response.data,
+      });
+    }
   },
-  getDashboardResponse: async () =>{
-    const response = await dashboardData();
-    set((state) => ({
-      DashboardResponse: response.data,
-    }));
-  }
 }));
