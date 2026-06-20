@@ -15,7 +15,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { AUTH_ROUTES } from "@/constants/auth.routes";
+import { AUTH_ROUTES } from "@/constants/app.routes";
 import { getErrorMessage } from "@/lib/get-error-message";
 import {
   forgotPasswordSchema,

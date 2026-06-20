@@ -14,14 +14,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { AUTH_ROUTES } from "@/constants/auth.routes";
+import { AUTH_ROUTES } from "@/constants/app.routes";
 import { useAuth } from "@/hooks/use-auth";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { loginSchema, type LoginFormValues } from "@/schemas/auth/login.schema";
 
 export function LoginForm() {
   const navigate = useNavigate();
-  const { actions, isAuthenticated , isInitializing } = useAuth();
+  const { actions, isAuthenticated, isInitializing } = useAuth();
   const [rootError, setRootError] = useState<string | null>(null);
 
   const form = useForm<LoginFormValues>({
@@ -31,6 +31,7 @@ export function LoginForm() {
       password: "",
     },
   });
+
   if (isInitializing) {
     return (
       <div className="flex min-h-svh items-center justify-center">
@@ -42,7 +43,7 @@ export function LoginForm() {
   if (isAuthenticated) {
     navigate("/dashboard");
   }
-  
+
   const onSubmit = async (values: LoginFormValues) => {
     try {
       setRootError(null);

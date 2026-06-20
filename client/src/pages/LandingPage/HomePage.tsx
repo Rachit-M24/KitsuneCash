@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, BarChart3, Shield, Sparkles, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { AUTH_ROUTES } from "@/constants/auth.routes";
+import { AUTH_ROUTES } from "@/constants/app.routes";
 import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 import FloatingLines from "@/components/animations/FloatLines/FloatingLines";
