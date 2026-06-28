@@ -1,11 +1,12 @@
-import type { Expense } from "@/types/Expense";
+import { createExpense, deleteExpense, getAllExpenses, getExpenseById, updateExpense } from "@/api/expense.api";
+import type { Expense } from "@/types/expenseTypes/Expense";
 import { create } from "zustand";
 
 interface ExpenseActions {
     insertExpense: (expense: Expense) => void;
     fetchExpenseList: () => void;
     fetchExpenseById: (id: string) => void;
-    updateExpense: (expense: Expense) => void;  
+    updateExpense: (expense: Expense) => void;
     deleteExpense: (id: string) => void;
 }
 
@@ -26,24 +27,27 @@ const initialState = {
 }
 export const expenseStore = create<ExpenseState & ExpenseActions>((set) => ({
     ...initialState,
-    insertExpense: (expense: Expense) => set((state) => ({
-        expenseList: [...state.expenseList, expense],
-    })),
-    fetchExpenseList: () => set((state) =>{
-        return {
-            expenseList: [...state.expenseList],
-        }
-    }),
-    fetchExpenseById: (id: string) => set((state) => {
-        const expense = state.expenseList.find((expense) => expense.id === id) || null;
-        return {
-            expense,
-        }
-    }),
-    updateExpense: (expense: Expense) => set((state) => ({
-        expenseList: state.expenseList.map((item) => item.id === expense.id ? expense : item),
-    })),
-    deleteExpense: (id: string) => set((state) => ({
-        expenseList: state.expenseList.filter((expense) => expense.id !== id),
-    })),
+    insertExpense: async (expense: Expense) => {
+        const result = await createExpense(expense);
+        set((state) => ({
+            expenseList: [...state.expenseList, result.data.expense],
+        }))
+    },
+    fetchExpenseList: async () => {
+        const result = await getAllExpenses();
+        set(() => ({
+            expenseList: result.data.expenses,
+        }))
+    },
+    fetchExpenseById: async (id: string) => {
+        const expense = await getExpenseById(id);
+        set({ expense: expense.data.expense });
+    },
+    updateExpense: async (expense: Expense) => {
+        const updatedExpense = await updateExpense(expense.id, expense);
+        set((state) => ({ expenseList: state.expenseList.map((item) => item.id === expense.id ? updatedExpense.data.expense : item) }))
+    },
+    deleteExpense: async (id: string) => {
+        await deleteExpense(id);
+    }
 }));

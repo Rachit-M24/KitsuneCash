@@ -3,6 +3,7 @@ import { HomePage } from "@/pages/LandingPage/HomePage";
 import { DashboardPage } from "@/pages/Dashboard/DashboardPage";
 import { authRoutes } from "./auth.routes";
 import ProtectedRoute from "@/utils/ProtectedRoutes";
+import CategoryPage from "@/pages/category/CategoryPage";
 
 export const routes = [
   {
@@ -41,7 +42,7 @@ export const routes = [
     path: "/category",
     element: (
       <ProtectedRoute>
-        <DashboardPage />
+        <CategoryPage />
       </ProtectedRoute>
     ),
   },

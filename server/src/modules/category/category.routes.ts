@@ -16,7 +16,7 @@ router.get("/:categoryId", categoryController.GetCategoryById);
 
 router.post("/", validateBody(insertCategorySchema), categoryController.InsertCategory);
 
-router.patch("/:categoryId",
+router.put("/:categoryId",
   validateBody(updateCategorySchema),
   categoryController.UpdateCategory,
 );
