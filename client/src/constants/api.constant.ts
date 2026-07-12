@@ -17,11 +17,11 @@ export const API_PATHS = {
     getBudgetById: (id: string) => `/budget/${id}`,
   },
   expense: {
-    getAllExpense: "/expense",
-    addExpense: "/expense",
-    updateExpense: (id: string) => `/expense/${id}`,
-    deleteExpense: (id: string) => `/expense/${id}`,
-    getExpenseById: (id: string) => `/expense/${id}`,
+    getAllExpense: "/expenses",
+    addExpense: "/expenses",
+    updateExpense: (id: string) => `/expenses/${id}`,
+    deleteExpense: (id: string) => `/expenses/${id}`,
+    getExpenseById: (id: string) => `/expenses/${id}`,
   },
   category: {
     getAllCategory: "/categories",

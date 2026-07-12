@@ -8,7 +8,6 @@ import type { Category } from "@/types/categoryTypes/Category";
 import type { FieldConfig } from "@/components/forms/DynamicForm";
 import type { CategoryFormValues } from "@/schemas/category/category.schema";
 
-/** Drives which panel is visible */
 export type FormPanelMode = "closed" | "create" | "update";
 
 
@@ -42,7 +41,7 @@ export function buildCategoryColumns({
     },
     {
       id: "actions",
-      header: "",           // no header label — icon buttons speak for themselves
+      header: "",           
       enableSorting: false,
       size: 80,
       cell: ({ row }) => (
@@ -79,7 +78,6 @@ export function buildCategoryColumns({
 }
 
 // ─── DynamicForm field config ────────────────────────────────────────────────
-// Defined once here; consumed by CategoryPage for both create & update modes.
 
 export const CATEGORY_FIELDS: FieldConfig<CategoryFormValues>[] = [
   {
@@ -97,8 +95,6 @@ export const CATEGORY_FIELDS: FieldConfig<CategoryFormValues>[] = [
   },
 ];
 
-// ─── Page hook ───────────────────────────────────────────────────────────────
-
 export function useCategoryPage() {
   const { categoryList, isLoading, actions } = categoryStore();
 
@@ -111,12 +107,10 @@ export function useCategoryPage() {
   // a proper skeleton instead of the empty-state on first load.
   const [hasFetched, setHasFetched] = useState(false);
 
-  /* ── fetch on mount ───────────────────────────────────────────────── */
   useEffect(() => {
     void actions.fetchCategoryList().finally(() => setHasFetched(true));
   }, []);
 
-  /* ── form default values ─────────────────────────────────────────── */
   const formDefaultValues = useMemo<Partial<CategoryFormValues>>(() => {
     if (panelMode === "update" && selectedCategory) {
       return { name: selectedCategory.name, icon: selectedCategory.icon };
@@ -124,7 +118,6 @@ export function useCategoryPage() {
     return { name: "", icon: "" };
   }, [panelMode, selectedCategory]);
 
-  /* ── panel helpers ───────────────────────────────────────────────── */
   const openCreate = useCallback(() => {
     setSelectedCategory(null);
     setPanelMode("create");
@@ -140,7 +133,6 @@ export function useCategoryPage() {
     setSelectedCategory(null);
   }, []);
 
-  /* ── create / update ─────────────────────────────────────────────── */
   const handleSubmit = useCallback(
     async (values: CategoryFormValues) => {
       if (panelMode === "create") {

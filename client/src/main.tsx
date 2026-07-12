@@ -8,7 +8,7 @@ import { AppInitializer } from "./components/auth/AppInitializer";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <AppInitializer>
-    <RouterProvider router={router} />
+      <RouterProvider router={router} />
     </AppInitializer>
   </StrictMode>,
 );

@@ -17,7 +17,6 @@ export default function CategoryPage() {
     formDefaultValues,
     tableInstance,
     openCreate,
-    openUpdate,
     closePanel,
     handleSubmit,
     handleDelete,
@@ -137,7 +136,6 @@ export default function CategoryPage() {
           </div>
         )}
       </div>
-
 
       {/* Inline keyframe for panel slide-in */}
       <style>{`

@@ -4,15 +4,13 @@ import { DashboardPage } from "@/pages/Dashboard/DashboardPage";
 import { authRoutes } from "./auth.routes";
 import ProtectedRoute from "@/utils/ProtectedRoutes";
 import CategoryPage from "@/pages/category/CategoryPage";
+import ExpensePage from "@/pages/Expense/ExpensePage";
 
 export const routes = [
   {
     path: "/",
     element: <Layout />,
-    children: [
-      { index: true, element: <HomePage /> },
-      authRoutes,
-    ],
+    children: [{ index: true, element: <HomePage /> }, authRoutes],
   },
   {
     path: "/dashboard",
@@ -34,7 +32,7 @@ export const routes = [
     path: "/expense",
     element: (
       <ProtectedRoute>
-        <DashboardPage />
+        <ExpensePage />
       </ProtectedRoute>
     ),
   },
@@ -48,6 +46,14 @@ export const routes = [
   },
   {
     path: "/goal",
+    element: (
+      <ProtectedRoute>
+        <DashboardPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/settings",
     element: (
       <ProtectedRoute>
         <DashboardPage />

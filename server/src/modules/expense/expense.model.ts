@@ -2,9 +2,11 @@ import mongoose from "mongoose";
 
 export interface ExpenseDocument extends mongoose.Document {
   userId: mongoose.Types.ObjectId;
+  title: string;
   categoryId: mongoose.Types.ObjectId;
   amount: number;
   description?: string;
+  
   date: Date;
   createdAt: Date;
   updatedAt: Date;
