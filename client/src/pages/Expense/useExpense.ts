@@ -9,7 +9,9 @@ import { Pencil, Receipt, Trash2 } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
 
 import { useDataTable } from "@/hooks/table/useDataTable";
+import { categoryStore } from "@/store/category.store";
 import { expenseStore } from "@/store/expense.store";
+import type { Category } from "@/types/categoryTypes/Category";
 import type { Expense } from "@/types/expenseTypes/Expense";
 import type { FieldConfig } from "@/components/forms/DynamicForm";
 import type { ExpenseFormValues } from "@/schemas/expense/expense.schema";
@@ -20,31 +22,37 @@ export function buildExpenseColumns({
   onEdit,
   onDelete,
   isLoading,
+  categoryLookup,
 }: {
   onEdit: (row: Expense) => void;
   onDelete: (id: string) => void;
   isLoading: boolean;
+  categoryLookup: Record<string, Category>;
 }): ColumnDef<Expense, unknown>[] {
   return [
     {
-      accessorKey: "title",
-      header: "Title",
+      accessorKey: "description",
+      header: "Description",
       cell: ({ getValue }) =>
         createElement(
           "span",
           { className: "font-medium text-white" },
-          getValue() as string,
+          (getValue() as string) || "—",
         ),
     },
     {
-      accessorKey: "category",
+      accessorKey: "categoryId",
       header: "Category",
-      cell: ({ getValue }) =>
-        createElement(
+      cell: ({ getValue }) => {
+        const categoryId = getValue() as string;
+        const categoryName = categoryLookup[categoryId]?.name ?? "Unassigned";
+
+        return createElement(
           "span",
           { className: "text-zinc-300" },
-          getValue() as string,
-        ),
+          categoryName,
+        );
+      },
     },
     {
       accessorKey: "amount",
@@ -79,7 +87,7 @@ export function buildExpenseColumns({
             "button",
             {
               type: "button",
-              "aria-label": `Edit ${row.original.title}`,
+              "aria-label": `Edit expense`,
               disabled: isLoading,
               onClick: (e: React.MouseEvent<HTMLButtonElement>) => {
                 e.stopPropagation();
@@ -97,7 +105,7 @@ export function buildExpenseColumns({
             "button",
             {
               type: "button",
-              "aria-label": `Delete ${row.original.title}`,
+              "aria-label": `Delete expense`,
               disabled: isLoading,
               onClick: (e: React.MouseEvent<HTMLButtonElement>) => {
                 e.stopPropagation();
@@ -116,52 +124,6 @@ export function buildExpenseColumns({
   ];
 }
 
-export const EXPENSE_FIELDS: FieldConfig<ExpenseFormValues>[] = [
-  {
-    name: "title",
-    type: "text",
-    label: "Title",
-    placeholder: "e.g. Grocery run",
-    required: true,
-  },
-  {
-    name: "description",
-    type: "textarea",
-    label: "Description",
-    placeholder: "Add notes about this expense",
-    required: false,
-  },
-  {
-    name: "amount",
-    type: "number",
-    label: "Amount",
-    placeholder: "0.00",
-    required: true,
-    min: 0,
-    step: 0.01,
-  },
-  {
-    name: "category",
-    type: "select",
-    label: "Category",
-    placeholder: "Select category",
-    required: true,
-    options: [
-      { label: "Food", value: "Food" },
-      { label: "Travel", value: "Travel" },
-      { label: "Utilities", value: "Utilities" },
-      { label: "Entertainment", value: "Entertainment" },
-      { label: "Health", value: "Health" },
-    ],
-  },
-  {
-    name: "date",
-    type: "date",
-    label: "Date",
-    required: true,
-  },
-];
-
 export function useExpense() {
   const {
     expenseList,
@@ -172,6 +134,8 @@ export function useExpense() {
     deleteExpense,
   } = expenseStore();
 
+  const { categoryList, actions: categoryActions } = categoryStore();
+
   const [panelMode, setPanelMode] = useState<ExpensePanelMode>("closed");
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
   const [hasFetched, setHasFetched] = useState(false);
@@ -180,22 +144,80 @@ export function useExpense() {
     void fetchExpenseList().finally(() => setHasFetched(true));
   }, [fetchExpenseList]);
 
+  useEffect(() => {
+    if (categoryList.length === 0) {
+      void categoryActions.fetchCategoryList();
+    }
+  }, [categoryActions, categoryList.length]);
+
+  const categoryOptions = useMemo(
+    () =>
+      categoryList.map((category) => ({
+        label: category.name,
+        value: category.id,
+      })),
+    [categoryList],
+  );
+
+  const categoryLookup = useMemo(
+    () =>
+      Object.fromEntries(
+        categoryList.map((category) => [category.id, category]),
+      ) as Record<string, Category>,
+    [categoryList],
+  );
+
+  const EXPENSE_FIELDS: FieldConfig<ExpenseFormValues>[] = useMemo(
+    () => [
+      {
+        name: "description",
+        type: "textarea",
+        label: "Description",
+        placeholder: "Add notes about this expense",
+        required: false,
+      },
+      {
+        name: "amount",
+        type: "number",
+        label: "Amount",
+        placeholder: "0.00",
+        required: true,
+        min: 0,
+        step: 0.01,
+      },
+      {
+        name: "categoryId",
+        type: "select",
+        label: "Category",
+        placeholder: "Select category",
+        required: true,
+        options: categoryOptions,
+      },
+      {
+        name: "date",
+        type: "date",
+        label: "Date",
+        required: true,
+      },
+    ],
+    [categoryOptions],
+  );
+
   const formDefaultValues = useMemo<Partial<ExpenseFormValues>>(() => {
     if (panelMode === "update" && selectedExpense) {
+      const selectedCategoryId = selectedExpense.categoryId ?? "";
       return {
-        title: selectedExpense.title,
         description: selectedExpense.description ?? "",
         amount: selectedExpense.amount,
-        category: selectedExpense.category,
+        categoryId: selectedCategoryId,
         date: selectedExpense.date.slice(0, 10),
       };
     }
 
     return {
-      title: "",
       description: "",
       amount: undefined,
-      category: "",
+      categoryId: "",
       date: "",
     };
   }, [panelMode, selectedExpense]);
@@ -219,18 +241,16 @@ export function useExpense() {
     async (values: ExpenseFormValues) => {
       if (panelMode === "create") {
         await insertExpense({
-          title: values.title,
           description: values.description ?? "",
           amount: values.amount,
-          category: values.category,
+          categoryId: values.categoryId,
           date: values.date,
         });
       } else if (panelMode === "update" && selectedExpense) {
         await updateExpense(selectedExpense.id, {
-          title: values.title,
           description: values.description ?? "",
           amount: values.amount,
-          category: values.category,
+          categoryId: values.categoryId,
           date: values.date,
         });
       }
@@ -255,19 +275,22 @@ export function useExpense() {
         onEdit: openUpdate,
         onDelete: (id) => void handleDelete(id),
         isLoading,
+        categoryLookup,
       }),
-    [handleDelete, isLoading, openUpdate],
+    [categoryLookup, handleDelete, isLoading, openUpdate],
   );
 
   const tableInstance = useDataTable<Expense>({
     data: expenseList,
     columns,
     getRowId: (row) => row.id,
-    globalFilterFn: (row, query) =>
-      [row.title, row.category, row.description]
+    globalFilterFn: (row, query) => {
+      const categoryName = categoryLookup[row.categoryId]?.name ?? "";
+      return [row.description, categoryName, row.amount.toString()]
         .join(" ")
         .toLowerCase()
-        .includes(query),
+        .includes(query);
+    },
   });
 
   return {
@@ -283,5 +306,6 @@ export function useExpense() {
     handleSubmit,
     handleDelete,
     emptyStateIcon: Receipt,
+    expenseFields: EXPENSE_FIELDS,
   };
 }

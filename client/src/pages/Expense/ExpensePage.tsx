@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { expenseSchema } from "@/schemas/expense/expense.schema";
 import type { ExpenseFormValues } from "@/schemas/expense/expense.schema";
 
-import { EXPENSE_FIELDS, useExpense } from "./useExpense";
+import { useExpense } from "./useExpense";
 
 export default function ExpensePage() {
   const {
@@ -21,6 +21,7 @@ export default function ExpensePage() {
     handleSubmit,
     handleDelete,
     emptyStateIcon,
+    expenseFields,
   } = useExpense();
 
   const isPanelOpen = panelMode !== "closed";
@@ -80,7 +81,7 @@ export default function ExpensePage() {
                     </h2>
                     {panelMode === "update" && selectedExpense ? (
                       <p className="text-xs text-zinc-500">
-                        {selectedExpense.title}
+                        {selectedExpense.description || "Update expense"}
                       </p>
                     ) : null}
                   </div>
@@ -99,7 +100,7 @@ export default function ExpensePage() {
               <div className="px-5 py-5">
                 <DynamicForm<ExpenseFormValues>
                   key={`${panelMode}-${selectedExpense?.id ?? "new"}`}
-                  fields={EXPENSE_FIELDS}
+                  fields={expenseFields}
                   schema={expenseSchema}
                   defaultValues={formDefaultValues}
                   onSubmit={handleSubmit}
