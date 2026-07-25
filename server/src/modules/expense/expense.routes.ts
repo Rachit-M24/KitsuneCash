@@ -8,13 +8,9 @@ const router = Router();
 
 router.use(authenticate);
 
-router.post(
-  "/",
-  validateBody(insertExpenseSchema),
-  expenseController.InsertExpense,
-);
+router.post("/", validateBody(insertExpenseSchema), expenseController.InsertExpense);
 router.get("/", expenseController.GetExpenses);
 router.get("/:expenseId", expenseController.GetExpenseById);
-router.patch("/:expenseId", expenseController.UpdateExpense);
+router.put("/:expenseId", expenseController.UpdateExpense);
 router.delete("/:expenseId", expenseController.DeleteExpense);
 export default router;

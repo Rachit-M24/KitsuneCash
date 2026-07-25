@@ -5,47 +5,57 @@ import {
   useMemo,
   useState,
 } from "react";
-import { Pencil, Receipt, Trash2 } from "lucide-react";
+import { Pencil, PiggyBank, Trash2 } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
 
 import { useDataTable } from "@/hooks/table/useDataTable";
-import { expenseStore } from "@/store/expense.store";
+import { budgetStore } from "@/store/budget.store";
 import type { Category } from "@/types/categoryTypes/Category";
-import type { Expense } from "@/types/expenseTypes/Expense";
+import {
+  getBudgetCategoryName,
+  getBudgetCategoryId,
+  getBudgetDocumentId,
+  type Budget,
+} from "@/types/budgetTypes/Budget";
 import type { FieldConfig } from "@/components/forms/DynamicForm";
-import type { ExpenseFormValues } from "@/schemas/expense/expense.schema";
+import type { SelectOption } from "@/components/forms/DynamicForm/DynamicForm.types";
+import type { BudgetFormValues } from "@/schemas/budget/budget.schema";
 import { useLookupData } from "@/utils/Common/useLookUpData";
 
-export type ExpensePanelMode = "closed" | "create" | "update";
+export type BudgetPanelMode = "closed" | "create" | "update";
 
-export function buildExpenseColumns({
+export function buildBudgetColumns({
   onEdit,
   onDelete,
   isLoading,
   categoryLookup,
+  monthLookup,
 }: {
-  onEdit: (row: Expense) => void;
+  onEdit: (row: Budget) => void;
   onDelete: (id: string) => void;
   isLoading: boolean;
   categoryLookup: Record<string, Category>;
-}): ColumnDef<Expense, unknown>[] {
+  monthLookup: Record<number, string>;
+}): ColumnDef<Budget, unknown>[] {
   return [
     {
-      accessorKey: "description",
-      header: "Description",
+      accessorKey: "amount",
+      header: "Amount",
       cell: ({ getValue }) =>
         createElement(
           "span",
           { className: "font-medium text-white" },
-          (getValue() as string) || "—",
+          `$${Number(getValue()).toFixed(2)}`,
         ),
     },
     {
       accessorKey: "categoryId",
       header: "Category",
       cell: ({ getValue }) => {
-        const categoryId = getValue() as string;
-        const categoryName = categoryLookup[categoryId]?.name ?? "Unassigned";
+        const categoryName = getBudgetCategoryName(
+          getValue() as Budget["categoryId"],
+          categoryLookup,
+        );
 
         return createElement(
           "span",
@@ -55,23 +65,25 @@ export function buildExpenseColumns({
       },
     },
     {
-      accessorKey: "amount",
-      header: "Amount",
-      cell: ({ getValue }) =>
-        createElement(
+      accessorKey: "month",
+      header: "Month",
+      cell: ({ getValue }) => {
+        const month = getValue() as number;
+        return createElement(
           "span",
           { className: "text-zinc-300" },
-          `$${Number(getValue()).toFixed(2)}`,
-        ),
+          monthLookup[month] ?? "—",
+        );
+      },
     },
     {
-      accessorKey: "date",
-      header: "Date",
+      accessorKey: "year",
+      header: "Year",
       cell: ({ getValue }) =>
         createElement(
           "span",
           { className: "text-zinc-300" },
-          new Date(getValue() as string).toLocaleDateString(),
+          getValue() as number,
         ),
     },
     {
@@ -87,7 +99,7 @@ export function buildExpenseColumns({
             "button",
             {
               type: "button",
-              "aria-label": `Edit expense`,
+              "aria-label": "Edit budget",
               disabled: isLoading,
               onClick: (e: React.MouseEvent<HTMLButtonElement>) => {
                 e.stopPropagation();
@@ -105,11 +117,11 @@ export function buildExpenseColumns({
             "button",
             {
               type: "button",
-              "aria-label": `Delete expense`,
+              "aria-label": "Delete budget",
               disabled: isLoading,
               onClick: (e: React.MouseEvent<HTMLButtonElement>) => {
                 e.stopPropagation();
-                onDelete(row.original.id);
+                onDelete(getBudgetDocumentId(row.original));
               },
               className:
                 "flex size-7 items-center justify-center rounded-md text-zinc-500 transition-colors hover:bg-rose-500/10 hover:text-rose-400 disabled:pointer-events-none disabled:opacity-40",
@@ -124,35 +136,34 @@ export function buildExpenseColumns({
   ];
 }
 
-export function useExpense() {
+export function useBudget() {
   const {
-    expenseList,
+    budgetList,
     isLoading,
-    insertExpense,
-    fetchExpenseList,
-    updateExpense,
-    deleteExpense,
-  } = expenseStore();
+    insertBudget,
+    fetchBudgetList,
+    updateBudget,
+    deleteBudget,
+  } = budgetStore();
 
-  const { categoryOptions, categoryMap } = useLookupData();
+  const { categoryOptions, categoryMap, monthOptions, monthMap } =
+    useLookupData();
 
-  const [panelMode, setPanelMode] = useState<ExpensePanelMode>("closed");
-  const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
+  const [panelMode, setPanelMode] = useState<BudgetPanelMode>("closed");
+  const [selectedBudget, setSelectedBudget] = useState<Budget | null>(null);
   const [hasFetched, setHasFetched] = useState(false);
 
   useEffect(() => {
-    void fetchExpenseList().finally(() => setHasFetched(true));
-  }, [fetchExpenseList]);
+    void fetchBudgetList().finally(() => setHasFetched(true));
+  }, [fetchBudgetList]);
 
-  const EXPENSE_FIELDS: FieldConfig<ExpenseFormValues>[] = useMemo(
-    () => [
-      {
-        name: "description",
-        type: "textarea",
-        label: "Description",
-        placeholder: "Add notes about this expense",
-        required: false,
-      },
+  const BUDGET_FIELDS: FieldConfig<BudgetFormValues>[] = useMemo(() => {
+    const monthSelectOptions: SelectOption[] = monthOptions.map((option) => ({
+      label: option.label,
+      value: String(option.value),
+    }));
+
+    return [
       {
         name: "amount",
         type: "number",
@@ -171,99 +182,120 @@ export function useExpense() {
         options: categoryOptions,
       },
       {
-        name: "date",
-        type: "date",
-        label: "Date",
+        name: "month",
+        type: "select",
+        label: "Month",
+        placeholder: "Select month",
         required: true,
+        options: monthSelectOptions,
       },
-    ],
-    [categoryOptions],
-  );
+      {
+        name: "year",
+        type: "number",
+        label: "Year",
+        placeholder: "2025",
+        required: true,
+        min: 1900,
+        max: 2100,
+      },
+    ];
+  }, [categoryOptions, monthOptions]);
 
-  const formDefaultValues = useMemo<Partial<ExpenseFormValues>>(() => {
-    if (panelMode === "update" && selectedExpense) {
-      const selectedCategoryId = selectedExpense.categoryId ?? "";
+  const formDefaultValues = useMemo<Partial<BudgetFormValues>>(() => {
+    if (panelMode === "update" && selectedBudget) {
       return {
-        description: selectedExpense.description ?? "",
-        amount: selectedExpense.amount,
-        categoryId: selectedCategoryId,
-        date: selectedExpense.date.slice(0, 10),
+        amount: selectedBudget.amount,
+        categoryId: getBudgetCategoryId(selectedBudget.categoryId),
+        month: selectedBudget.month,
+        year: selectedBudget.year,
       };
     }
 
     return {
-      description: "",
       amount: undefined,
       categoryId: "",
-      date: "",
+      month: new Date().getMonth() + 1,
+      year: new Date().getFullYear(),
     };
-  }, [panelMode, selectedExpense]);
+  }, [panelMode, selectedBudget]);
 
   const openCreate = useCallback(() => {
-    setSelectedExpense(null);
+    setSelectedBudget(null);
     setPanelMode("create");
   }, []);
 
-  const openUpdate = useCallback((expense: Expense) => {
-    setSelectedExpense(expense);
+  const openUpdate = useCallback((budget: Budget) => {
+    setSelectedBudget(budget);
     setPanelMode("update");
   }, []);
 
   const closePanel = useCallback(() => {
     setPanelMode("closed");
-    setSelectedExpense(null);
+    setSelectedBudget(null);
   }, []);
 
   const handleSubmit = useCallback(
-    async (values: ExpenseFormValues) => {
+    async (values: BudgetFormValues) => {
       if (panelMode === "create") {
-        await insertExpense({
-          description: values.description ?? "",
+        await insertBudget({
           amount: values.amount,
           categoryId: values.categoryId,
-          date: values.date,
+          month: values.month,
+          year: values.year,
         });
-      } else if (panelMode === "update" && selectedExpense) {
-        await updateExpense(selectedExpense.id, {
-          description: values.description ?? "",
+      } else if (panelMode === "update" && selectedBudget) {
+        await updateBudget(getBudgetDocumentId(selectedBudget), {
           amount: values.amount,
           categoryId: values.categoryId,
-          date: values.date,
+          month: values.month,
+          year: values.year,
         });
       }
       closePanel();
     },
-    [panelMode, selectedExpense, insertExpense, updateExpense, closePanel],
+    [closePanel, insertBudget, panelMode, selectedBudget, updateBudget],
   );
 
   const handleDelete = useCallback(
     async (id: string) => {
-      await deleteExpense(id);
-      if (selectedExpense?.id === id) {
+      const isSelected =
+        getBudgetDocumentId(selectedBudget ?? ({} as Budget)) === id;
+
+      await deleteBudget(id);
+
+      if (isSelected) {
         closePanel();
       }
     },
-    [deleteExpense, closePanel, selectedExpense?.id],
+    [closePanel, deleteBudget, selectedBudget],
   );
 
   const columns = useMemo(
     () =>
-      buildExpenseColumns({
+      buildBudgetColumns({
         onEdit: openUpdate,
         onDelete: (id) => void handleDelete(id),
         isLoading,
         categoryLookup: categoryMap,
+        monthLookup: monthMap,
       }),
-    [categoryMap, handleDelete, isLoading, openUpdate],
+    [categoryMap, handleDelete, isLoading, monthMap, openUpdate],
   );
 
-  const tableInstance = useDataTable<Expense>({
-    data: expenseList,
+  const tableInstance = useDataTable<Budget>({
+    data: budgetList,
     columns,
-    getRowId: (row) => row.id,
+    getRowId: (row) => getBudgetDocumentId(row),
     globalFilterFn: (row, query) => {
-      const categoryName = categoryMap[row.categoryId]?.name ?? "";
-      return [row.description, categoryName, row.amount.toString()]
+      const categoryName = getBudgetCategoryName(row.categoryId, categoryMap);
+      const monthName = monthMap[row.month] ?? "";
+
+      return [
+        categoryName,
+        monthName,
+        row.year.toString(),
+        row.amount.toString(),
+      ]
         .join(" ")
         .toLowerCase()
         .includes(query);
@@ -274,7 +306,7 @@ export function useExpense() {
     isLoading,
     hasFetched,
     panelMode,
-    selectedExpense,
+    selectedBudget,
     formDefaultValues,
     tableInstance,
     openCreate,
@@ -282,7 +314,7 @@ export function useExpense() {
     closePanel,
     handleSubmit,
     handleDelete,
-    emptyStateIcon: Receipt,
-    expenseFields: EXPENSE_FIELDS,
+    emptyStateIcon: PiggyBank,
+    budgetFields: BUDGET_FIELDS,
   };
 }

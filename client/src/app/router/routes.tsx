@@ -5,6 +5,7 @@ import { authRoutes } from "./auth.routes";
 import ProtectedRoute from "@/utils/ProtectedRoutes";
 import CategoryPage from "@/pages/category/CategoryPage";
 import ExpensePage from "@/pages/Expense/ExpensePage";
+import BudgetPage from "@/pages/Budget/BudgetPage";
 
 export const routes = [
   {
@@ -24,7 +25,7 @@ export const routes = [
     path: "/budget",
     element: (
       <ProtectedRoute>
-        <DashboardPage />
+        <BudgetPage />
       </ProtectedRoute>
     ),
   },

@@ -69,18 +69,21 @@ export const categoryStore = create<CategoryState>((set) => ({
     updateCategory: async (id, payload) => {
       set({ isLoading: true, isError: false, errorMessage: "" });
       const result = await updateCategoryApi(id, payload);
-      try{
+      try {
         set((state) => ({
-        categoryList: state.categoryList.map((item) =>
-          item.id === id ? result.data.category : item,
-        ),
-        category: result.data.category,
-        isLoading: false,
-      }));
-      }catch(error){
+          categoryList: state.categoryList.map((item) =>
+            item.id === id ? result.data.category : item,
+          ),
+          category: result.data.category,
+          isLoading: false,
+        }));
+      } catch (error) {
         console.error(error);
-        toast.error();
-        set({ isLoading: false, isError: true, errorMessage: "Failed to update category." });
+        set({
+          isLoading: false,
+          isError: true,
+          errorMessage: "Failed to update category.",
+        });
       }
     },
 

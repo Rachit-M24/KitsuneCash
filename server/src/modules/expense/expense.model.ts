@@ -2,11 +2,9 @@ import mongoose from "mongoose";
 
 export interface ExpenseDocument extends mongoose.Document {
   userId: mongoose.Types.ObjectId;
-  title: string;
   categoryId: mongoose.Types.ObjectId;
   amount: number;
   description?: string;
-  
   date: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -19,7 +17,7 @@ const expenseSchema = new mongoose.Schema<ExpenseDocument>(
       ref: "User",
       required: true,
     },
-    
+
     categoryId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
@@ -41,7 +39,6 @@ const expenseSchema = new mongoose.Schema<ExpenseDocument>(
       type: Date,
       required: true,
     },
-
   },
   { timestamps: true },
 );

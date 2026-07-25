@@ -1,7 +1,5 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/hooks/use-auth";
 import { BottomNavbar } from "@/components/navbar/BottomNavbar";
 import FloatingLines from "@/components/animations/FloatLines/FloatingLines";
 
@@ -10,9 +8,6 @@ interface DashboardLayoutProps {
 }
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
-  const { actions } = useAuth();
-  const navigate = useNavigate();
-
   return (
     <div className="relative min-h-svh overflow-hidden bg-zinc-950 text-white">
       <div className="pointer-events-none fixed inset-0 z-0">
@@ -45,8 +40,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 KitsuneCash
               </span>
             </Link>
-
-
           </div>
         </header>
 

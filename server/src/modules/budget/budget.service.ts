@@ -1,7 +1,7 @@
 import { Budget } from "./budget.model.js";
 import { HttpError } from "../../utils/http.js";
 
-export const getAllBudgets = async (userId: string, budgetId: string) => {
+export const getAllBudgets = async (userId: string) => {
   const budgets = await Budget.find({ userId }).populate(
     "categoryId",
     "name icon",
