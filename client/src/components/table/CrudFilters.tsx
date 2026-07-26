@@ -1,4 +1,5 @@
 import { Search, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -28,6 +29,32 @@ export function CrudFilters({
     return null;
   }
 
+  const [localSearch, setLocalSearch] = useState(searchValue);
+  const debounceRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    setLocalSearch(searchValue);
+  }, [searchValue]);
+
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) {
+        window.clearTimeout(debounceRef.current);
+      }
+    };
+  }, []);
+
+  const handleChange = (value: string) => {
+    setLocalSearch(value);
+    if (!onSearchChange) return;
+
+    if (debounceRef.current) {
+      window.clearTimeout(debounceRef.current);
+    }
+
+    debounceRef.current = window.setTimeout(() => onSearchChange(value), 200);
+  };
+
   return (
     <div
       className={cn(
@@ -43,16 +70,16 @@ export function CrudFilters({
           />
           <Input
             type="search"
-            value={searchValue}
-            onChange={(event) => onSearchChange?.(event.target.value)}
+            value={localSearch}
+            onChange={(event) => handleChange(event.target.value)}
             placeholder={searchPlaceholder}
             aria-label={searchPlaceholder}
             className="h-9 border-white/10 bg-white/[0.03] pl-9 text-white placeholder:text-zinc-500 focus-visible:border-orange-500/60 focus-visible:ring-orange-500/25"
           />
-          {searchValue ? (
+          {localSearch ? (
             <button
               type="button"
-              onClick={() => onSearchChange?.("")}
+              onClick={() => handleChange("")}
               className="absolute top-1/2 right-2 flex size-6 -translate-y-1/2 items-center justify-center rounded-md text-zinc-500 transition-colors hover:bg-white/10 hover:text-white"
               aria-label="Clear search"
             >

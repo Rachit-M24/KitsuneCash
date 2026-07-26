@@ -1,5 +1,5 @@
 import {
-    Mic,
+    LayoutDashboard ,
     Sparkles,
     Wallet,
     Receipt,
@@ -11,7 +11,7 @@ import {
 import { useBottomNavbar, type NavItem } from "./useBottomNavbar";
 
 const ICON_MAP: Record<string, LucideIcon> = {
-    Mic,
+    LayoutDashboard ,
     Sparkles,
     Wallet,
     Receipt,

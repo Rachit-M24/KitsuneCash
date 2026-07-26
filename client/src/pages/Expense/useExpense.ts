@@ -257,17 +257,22 @@ export function useExpense() {
     [categoryMap, handleDelete, isLoading, openUpdate],
   );
 
-  const tableInstance = useDataTable<Expense>({
-    data: expenseList,
-    columns,
-    getRowId: (row) => row.id,
-    globalFilterFn: (row, query) => {
+  const globalFilterFn = useCallback(
+    (row: Expense, query: string) => {
       const categoryName = categoryMap[row.categoryId]?.name ?? "";
       return [row.description, categoryName, row.amount.toString()]
         .join(" ")
         .toLowerCase()
         .includes(query);
     },
+    [categoryMap],
+  );
+
+  const tableInstance = useDataTable<Expense>({
+    data: expenseList,
+    columns,
+    getRowId: (row) => row.id,
+    globalFilterFn,
   });
 
   return {

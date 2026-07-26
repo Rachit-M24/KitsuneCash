@@ -10,7 +10,6 @@ import type { CategoryFormValues } from "@/schemas/category/category.schema";
 
 export type FormPanelMode = "closed" | "create" | "update";
 
-
 export function buildCategoryColumns({
   onEdit,
   onDelete,
@@ -41,7 +40,7 @@ export function buildCategoryColumns({
     },
     {
       id: "actions",
-      header: "",           
+      header: "",
       enableSorting: false,
       size: 80,
       cell: ({ row }) => (
@@ -174,8 +173,10 @@ export function useCategoryPage() {
     data: categoryList,
     columns,
     getRowId: (row) => row.id,
-    globalFilterFn: (row, query) =>
-      row.name.toLowerCase().includes(query),
+    globalFilterFn: useCallback(
+      (row: Category, query: string) => row.name.toLowerCase().includes(query),
+      [],
+    ),
   });
 
   return {

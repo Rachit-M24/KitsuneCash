@@ -282,11 +282,8 @@ export function useBudget() {
     [categoryMap, handleDelete, isLoading, monthMap, openUpdate],
   );
 
-  const tableInstance = useDataTable<Budget>({
-    data: budgetList,
-    columns,
-    getRowId: (row) => getBudgetDocumentId(row),
-    globalFilterFn: (row, query) => {
+  const globalFilterFn = useCallback(
+    (row: Budget, query: string) => {
       const categoryName = getBudgetCategoryName(row.categoryId, categoryMap);
       const monthName = monthMap[row.month] ?? "";
 
@@ -300,6 +297,14 @@ export function useBudget() {
         .toLowerCase()
         .includes(query);
     },
+    [categoryMap, monthMap],
+  );
+
+  const tableInstance = useDataTable<Budget>({
+    data: budgetList,
+    columns,
+    getRowId: (row) => getBudgetDocumentId(row),
+    globalFilterFn,
   });
 
   return {

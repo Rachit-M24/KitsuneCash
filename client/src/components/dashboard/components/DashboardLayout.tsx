@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Sparkles } from "lucide-react";
+import { useMemo } from "react";
 import { BottomNavbar } from "@/components/navbar/BottomNavbar";
 import FloatingLines from "@/components/animations/FloatLines/FloatingLines";
 
@@ -10,9 +11,13 @@ interface DashboardLayoutProps {
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <div className="relative min-h-svh overflow-hidden bg-zinc-950 text-white">
+      {/**
+       * Memoized props to avoid re-creating arrays/objects each render.
+       * Avoids re-running the FloatingLines effect on every parent render.
+       */}
       <div className="pointer-events-none fixed inset-0 z-0">
         <FloatingLines
-          enabledWaves={["top", "bottom"]}
+          enabledWaves={useMemo(() => ["top", "bottom"], [])}
           lineCount={8}
           lineDistance={8}
           bendRadius={8}
@@ -20,7 +25,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           interactive
           parallax
           animationSpeed={1}
-          linesGradient={["#ff6800", "#6f6f6f", "#6a6a6a"]}
+          linesGradient={useMemo(() => ["#ff6800", "#6f6f6f", "#6a6a6a"], [])}
         />
       </div>
 

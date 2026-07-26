@@ -19,9 +19,9 @@ export interface UseBottomNavbarReturn {
 
 const NAV_ITEMS: NavItem[] = [
   {
-    key: "speech",
-    label: "Voice",
-    icon: "Mic",
+    key: "summary",
+    label: "Dashboard",
+    icon: "LayoutDashboard",
     path: APP_ROUTES.dashboard,
   },
   {
