@@ -5,7 +5,8 @@ import { Request, Response } from "express";
 
 export const getAllBudgets = asyncHandler(async (req: Request, res: Response) => {
   const { budgets } = await budgetService.getAllBudgets(
-    req.user!.id
+    req.user!.id,
+    req?.query,
   );
   res.status(200).json({ budgets });
 });

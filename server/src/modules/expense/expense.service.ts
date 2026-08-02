@@ -1,5 +1,7 @@
 import Expense, { ExpenseDocument } from "./expense.model.js";
 import { HttpError } from "../../utils/http.js";
+import { FinancialFilterDto } from "../Dto/api.filterDto.js";
+import { removeUndefined } from "../../utils/filterConfigBuilder.js";
 
 const toPublicExpense = (expense: ExpenseDocument) => ({
   id: expense._id.toString(),
@@ -31,35 +33,45 @@ export const insertExpense = async (
   return { expense: toPublicExpense(expense) };
 };
 
-export const getExpenses = async (userId: string)=>{
-  const expenses = await Expense.find({ userId }).sort({ date: -1 });
+export const getExpenses = async (
+  userId: string,
+  query: FinancialFilterDto,
+) => {
+  let filter = removeUndefined(query);
+
+  filter = { ...filter, userId };
+  const expenses = await Expense.find(filter).sort({ date: -1 });
 
   return { expenses: expenses.map(toPublicExpense) };
-}
+};
 
-export const getExpenseById = async (userId: string, expenseId: string) =>{
-  const expense = await Expense.findOne({ _id:expenseId, userId });
+export const getExpenseById = async (userId: string, expenseId: string) => {
+  const expense = await Expense.findOne({ _id: expenseId, userId });
 
-  if(!expense){
+  if (!expense) {
     throw new HttpError("Expense not found", 404);
   }
 
   return { expense: toPublicExpense(expense) };
-}
+};
 
-export const updateExpense = async( userId:string, expenseId: string, input: Partial<typeof Expense.prototype>) =>{
+export const updateExpense = async (
+  userId: string,
+  expenseId: string,
+  input: Partial<typeof Expense.prototype>,
+) => {
   const expense = await Expense.findOneAndUpdate(
     { _id: expenseId, userId },
     input,
     { new: true },
   );
 
-  if(!expense){
+  if (!expense) {
     throw new HttpError("Expense not found", 404);
   }
 
   return { expense: toPublicExpense(expense) };
-}
+};
 
 export const deleteExpense = async (userId: string, expenseId: string) => {
   const expense = await Expense.findOneAndDelete({

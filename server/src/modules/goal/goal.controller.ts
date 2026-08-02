@@ -9,7 +9,7 @@ export const InsertGoal = asyncHandler(async (req: Request, res: Response) => {
 });
 
 export const GetGoals = asyncHandler(async (req: Request, res: Response) => {
-  const { goals } = await goalService.getGoals(req.user!.id);
+  const { goals } = await goalService.getGoals(req.user!.id, req?.query);
 
   res.status(200).json({ goals });
 });

@@ -1,3 +1,5 @@
+import { removeUndefined } from "../../utils/filterConfigBuilder.js";
+import { FinancialFilterDto } from "../Dto/api.filterDto.js";
 import Goal from "./goal.model.js";
 
 export const createGoal = async (
@@ -13,9 +15,9 @@ export const createGoal = async (
   return { goal };
 };
 
-
-export const getGoals = async (userId: string) => {
-  const goals = await Goal.find({userId}).sort({ createdAt: -1 });
+export const getGoals = async (userId: string, query: FinancialFilterDto) => {
+  const filter = removeUndefined({ ...query, userId });
+  const goals = await Goal.find(filter).sort({ createdAt: -1 });
   return { goals };
 };
 
@@ -39,7 +41,7 @@ export const updateGoal = async (
   const goal = await Goal.findOneAndUpdate(
     { userId, _id: goalId },
     { ...input },
-    { new: true }
+    { new: true },
   );
   return { goal };
 };

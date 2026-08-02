@@ -1,11 +1,14 @@
 import { Budget } from "./budget.model.js";
 import { HttpError } from "../../utils/http.js";
+import { removeUndefined } from "../../utils/filterConfigBuilder.js";
+import { FinancialFilterDto } from "../Dto/api.filterDto.js";
 
-export const getAllBudgets = async (userId: string) => {
-  const budgets = await Budget.find({ userId }).populate(
-    "categoryId",
-    "name icon",
-  );
+export const getAllBudgets = async (
+  userId: string,
+  query: FinancialFilterDto,
+) => {
+  const filter = removeUndefined({ ...query, userId });
+  const budgets = await Budget.find(filter).populate("categoryId", "name icon");
 
   return { budgets };
 };

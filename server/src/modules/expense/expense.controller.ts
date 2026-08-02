@@ -14,7 +14,7 @@ export const InsertExpense = asyncHandler(
 );
 
 export const GetExpenses = asyncHandler(async (req: Request, res: Response) => {
-  const { expenses } = await expenseService.getExpenses(req.user!.id);
+  const { expenses } = await expenseService.getExpenses(req.user!.id, req.query);
 
   res.status(200).json({ expenses });
 });
